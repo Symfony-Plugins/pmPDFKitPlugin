@@ -1,0 +1,66 @@
+# pmPDFKitPlugin
+
+The `pmPDFKitPlugin` plugin is a clone on jdpace's PDFKit library for Ruby (and
+Ruby on Rails). It allows you to export any page as PDF only adding the pdf
+format to the request. IE: calling http://example.com/post/1.pdf
+
+## Requirements
+
+wkhtmltopdf library is required. You can download it from (wkhtmltopdf on Google code)[http://code.google.com/p/wkhtmltopdf/].
+
+## Installation
+
+  * Via subversion
+  
+        [bash]
+        $ svn co http://svn.symfony-project.com/plugins/pmPDFKitPlugin/trunk plugins/pmPDFKitPlugin
+        
+  * Via the symfony plugin system
+  
+        [bash]
+        $ ./symfony pl:p pmPDFKitPlugin
+
+## Usage
+
+  * enable the pmPDFKitFilter
+  
+        [yml]
+        pm_pdfkit:
+          class: pmPDFKitFilter
+  
+  * Optionally, you can add some parameters to the wkhtmltopdf command in app.yml
+  
+        [yml]
+        all:
+          pm_pdfkit:
+            page-size: Letter
+    
+    You can view the parameters in the wkhtmltopdf help.
+  
+  * Clean the cache
+  
+        [bash]
+        $ ./symfony cc
+  
+  * Finally, try to access any resource appending the .pdf format.
+
+## Advanced usage
+
+  * edit the default routes so any page can be transformed as pdf:
+  
+        [yml]
+        default_index:
+          url:   /:module.:sf_format
+          param: { action: index, sf_format: html }
+
+        default:
+          url:   /:module/:action.:sf_format/*
+          param: { sf_format: html }
+
+  * You can save any view to a file (instead of inline view in the browser)
+    using the pmPDFKit class.
+
+## TODO
+
+  * fix images paths (because images are loaded from the stylesheets).
+  * optimize the options parser.
