@@ -6,7 +6,7 @@ format to the request. IE: calling http://example.com/post/1.pdf
 
 ## Requirements
 
-wkhtmltopdf library is required. You can download it from (wkhtmltopdf on Google code)[http://code.google.com/p/wkhtmltopdf/].
+wkhtmltopdf library is required. You can download it from [wkhtmltopdf on Google code](http://code.google.com/p/wkhtmltopdf/).
 
 ## Installation
 
