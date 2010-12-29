@@ -10,7 +10,7 @@
 class pmPDFKit
 {
   protected
-    $executable = "/usr/local/bin/wkhtmltopdf",
+    $executable = "",
     $content = null,
     $stylesheets = array();
   
@@ -18,6 +18,10 @@ class pmPDFKit
   {
     $this->setContent($content);
     $this->setStylesheets($stylesheets);
+    
+    $options = pmPDFKitOptions::getAll();
+    
+    $this->setExecutable($options["executable"]);
   }
   
   public function setContent($content)
@@ -62,7 +66,7 @@ class pmPDFKit
     /*
      * read from stdin and write to stdout
      */
-    return "{$this->getExecutable()} - - {$options}";
+    return "{$this->getExecutable()} {$options} - -";
   }
   
   /**

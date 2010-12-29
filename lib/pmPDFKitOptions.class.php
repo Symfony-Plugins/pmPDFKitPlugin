@@ -17,17 +17,27 @@ class pmPDFKitOptions
     "default-header" => false,
     "orientation" => "Portrait",
     "page-size" => "A4",
-    "toc" => false
+    "toc" => false,
+    "executable" => "/usr/local/bin/wkhtmltopdf"
   );
   
-  public static function parse()
+  public static function getAll()
   {
     $opts = self::$default_options;
     
     foreach ($opts as $k => $v)
     {
-      $opts[$k] = sfConfig::get("app_pm_pdfkit_$k", false);
+      $opts[$k] = sfConfig::get("app_pm_pdfkit_$k", $opts[$k]);
     }
+    
+    return $opts;
+  }
+  
+  public static function parse()
+  {
+    $opts = self::getAll();
+    
+    unset($opts["executable"]);
     
     $args = "";
     foreach ($opts as $k => $v)
@@ -38,7 +48,7 @@ class pmPDFKitOptions
       }
       elseif (!is_bool($v))
       {
-        $args .= "--$k $v";
+        $args .= "--$k $v ";
       }
     }
     
