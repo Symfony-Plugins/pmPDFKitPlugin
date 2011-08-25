@@ -9,47 +9,152 @@
  */
 class pmPDFKitOptions
 {
-  protected static $default_options = array(
-    "book" => false,
-    "collate" => false,
-    "copies" => 1,
-    "cover" => false,
-    "default-header" => false,
-    "orientation" => "Portrait",
-    "page-size" => "A4",
-    "toc" => false,
-    "executable" => "/usr/local/bin/wkhtmltopdf"
+  protected static $switches = array(
+    'collate',
+    'no-collate',
+    'grayscale',
+    'lowquality',
+    'no-pdf-compression',
+    'outline',
+    'no-outline',
+    'background',
+    'no-background',
+    'custom-header-propagation',
+    'no-custom-header-propagation',
+    'default-header',
+    'disable-external-links',
+    'enable-external-links',
+    'disable-forms',
+    'enable-forms',
+    'images',
+    'no-images',
+    'disable-internal-links',
+    'enable-internal-links',
+    'disable-javascript',
+    'enable-javascript',
+    'disable-local-file-access',
+    'enable-local-file-access',
+    'exclude-from-outline',
+    'include-in-outline',
+    'disable-plugins',
+    'enable-plugins',
+    'print-media-type',
+    'no-print-media-type',
+    'disable-smart-shrinking',
+    'enable-smart-shrinking',
+    'stop-slow-scripts',
+    'no-stop-slow-scripts',
+    'disable-toc-back-links',
+    'enable-toc-back-links',
+    'footer-line',
+    'no-footer-line',
+    'header-line',
+    'no-header-line',
+    'disable-dotted-lines',
+    'disable-toc-links'
   );
   
-  public static function getAll()
+  protected static $options = array(
+    'cookie-jar',
+    'copies',
+    'dpi',
+    'image-dpi',
+    'image-quality',
+    'margin-bottom',
+    'margin-left',
+    'margin-right',
+    'margin-top',
+    'orientation',
+    'output-format',
+    'page-height',
+    'page-size',
+    'page-width',
+    'title',
+    'outline-depth',
+    'allow',
+    'checkbox-checked-svg',
+    'checkbox-svg',
+    'cookie',
+    'custom-header',
+    'encoding',
+    'javascript-delay',
+    'load-error-handling',
+    'minimum-font-size',
+    'page-offset',
+    'password',
+    'post',
+    'post-file',
+    'proxy',
+    'radiobutton-checked-svg',
+    'radiobutton-svg',
+    'run-script',
+    'user-style-sheet',
+    'username',
+    'window-status',
+    'zoom',
+    'footer-center',
+    'footer-font-name',
+    'footer-font-size',
+    'footer-html',
+    'footer-left',
+    'footer-right',
+    'footer-spacing',
+    'header-center',
+    'header-font-name',
+    'header-font-size',
+    'header-html',
+    'header-left',
+    'header-right',
+    'header-spacing',
+    //'replace', // how to do this?
+    'toc-header-text',
+    'toc-level-indentation',
+    'toc-text-size-shrink',
+    'xsl-style-sheet'
+  );
+  
+  public static function getSwitchesFromRequest(sfWebRequest $request)
   {
-    $opts = self::$default_options;
+    $switches = array();
     
-    foreach ($opts as $k => $v)
+    foreach (self::$switches as $switch)
     {
-      $opts[$k] = sfConfig::get("app_pm_pdfkit_$k", $opts[$k]);
+      if ($request->hasParameter($switch) && ($request->getParameter($switch) == "true" || $request->getParameter($switch) == 1))
+      {
+        $switches[] = $switch;
+      }
     }
     
-    return $opts;
+    return $switches;
   }
   
-  public static function parse()
+  public static function getOptionsFromRequest(sfWebRequest $request)
   {
-    $opts = self::getAll();
+    $options = array();
     
-    unset($opts["executable"]);
-    
-    $args = "";
-    foreach ($opts as $k => $v)
+    foreach (self::$options as $option)
     {
-      if (is_bool($v) && $v == true)
+      if ($request->hasParameter($option))
       {
-        $args .= "--$k";
+        $options[$option] = $request->getParameter($option);
       }
-      elseif (!is_bool($v))
-      {
-        $args .= "--$k $v ";
-      }
+    }
+    
+    return $options;
+  }
+  
+  public static function parse($switches, $options)
+  {
+    $args = "";
+    
+    foreach ($switches as $sw)
+    {
+      $args .= "--$sw ";
+    }
+    
+    foreach ($options as $k => $v)
+    {
+      $args .= "--$k $v ";
     }
     
     return $args;

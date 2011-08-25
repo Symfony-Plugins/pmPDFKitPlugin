@@ -33,8 +33,11 @@ class pmPDFKitFilter extends sfFilter
       // ... and the stylesheets
       $stylesheets = $response->getStylesheets();
       
+      $switches = pmPDFKitOptions::getSwitchesFromRequest($request);
+      $options = pmPDFKitOptions::getOptionsFromRequest($request);
+      
       // create a pmPDFKit instance
-      $pdf_kit = new pmPDFKit($content, $stylesheets);
+      $pdf_kit = new pmPDFKit($content, $stylesheets, $switches, $options);
       // and render the pdf
       $pdf = $pdf_kit->toPDF();
       

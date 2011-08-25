@@ -12,16 +12,19 @@ class pmPDFKit
   protected
     $executable = "",
     $content = null,
-    $stylesheets = array();
+    $stylesheets = array(),
+    $switches = array(),
+    $options = array();
   
-  public function __construct($content, $stylesheets)
+  public function __construct($content, $stylesheets, $switches = array(), $options = array())
   {
     $this->setContent($content);
     $this->setStylesheets($stylesheets);
     
-    $options = pmPDFKitOptions::getAll();
+    $this->switches = $switches;
+    $this->options = $options;
     
-    $this->setExecutable($options["executable"]);
+    $this->setExecutable(sfConfig::get('app_pm_pdf_kit_executable', '/usr/local/bin/wkhtmltopdf'));
   }
   
   public function setContent($content)
@@ -61,12 +64,12 @@ class pmPDFKit
    */
   protected function getCommand()
   {
-    $options = pmPDFKitOptions::parse();
+    $args = pmPDFKitOptions::parse($this->switches, $this->options);
     
     /*
      * read from stdin and write to stdout
      */
-    return "{$this->getExecutable()} {$options} - -";
+    return "{$this->getExecutable()} {$args} - -";
   }
   
   /**
