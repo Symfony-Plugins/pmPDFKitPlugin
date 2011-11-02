@@ -25,9 +25,25 @@ class pmPDFKitFilter extends sfFilter
     
     // execute next filter
     $filterChain->execute();
-    
+
     if ($format == "pdf")
     {
+      // checks if the user is authenticated
+      if (
+            ((sfConfig::get('sf_login_module') == $this->context->getModuleName()) && (sfConfig::get('sf_login_action') == $this->context->getActionName())
+          ||
+            (sfConfig::get('sf_secure_module') == $this->context->getModuleName()) && (sfConfig::get('sf_secure_action') == $this->context->getActionName()))
+          &&
+            !$this->context->getUser()->isAuthenticated())
+      {
+        if (sfConfig::get('sf_logging_enabled'))
+        {
+          $this->context->getEventDispatcher()->notify(new sfEvent($this, 'application.log', array(sprintf('Action "%s/%s" requires authentication, forwarding to "%s/%s"', $this->context->getModuleName(), $this->context->getActionName(), sfConfig::get('sf_login_module'), sfConfig::get('sf_login_action')))));
+        }
+        // the user is not authenticated
+        $this->context->getController()->forward(sfConfig::get('sf_login_module'), sfConfig::get('sf_login_action'));
+        throw new sfStopException();
+      }
       // get the content...
       $content = $response->getContent();
       // ... and the stylesheets
